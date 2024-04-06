@@ -107,7 +107,7 @@ class TaskCategoryServiceTest {
     }
 
     @Test
-    void canThrowCategoryNotFoundWhenAddingTaskCategory() {
+    void canThrowCategoryNameAlreadyExistsWhenAddingTaskCategory() {
         // given
         TaskCategory expected = new TaskCategory(
                 1L,
@@ -120,6 +120,74 @@ class TaskCategoryServiceTest {
 
         // when
         assertThrows(CategoryNameAlreadyExistsException.class, () -> underTest.add(expected));
+    }
+
+    @Test
+    void canUpdateTaskCategory() {
+        // given
+        TaskCategory expected = new TaskCategory(
+                1L,
+                "UPDATED",
+                "DESCRIPTION",
+                List.of()
+        );
+
+
+        TaskCategoryEntity taskCategoryEntity = new TaskCategoryEntity();
+        taskCategoryEntity.setId(1L);
+        taskCategoryEntity.setName("NAME");
+        taskCategoryEntity.setDescription("DESCRIPTION");
+
+        given(taskCategoryRepository.findById(anyLong())).willReturn(Optional.of(taskCategoryEntity));
+        given(taskCategoryRepository.save(any())).willReturn(taskCategoryEntity);
+
+        // when
+        assertDoesNotThrow(() -> underTest.update(1L, expected));
+
+        // then
+        ArgumentCaptor<TaskCategoryEntity> customerArgumentCaptor = ArgumentCaptor.forClass(TaskCategoryEntity.class);
+        verify(taskCategoryRepository).save(customerArgumentCaptor.capture());
+
+        assertEquals(expected.name(), customerArgumentCaptor.getValue().getName());
+        assertEquals(expected.description(), customerArgumentCaptor.getValue().getDescription());
+    }
+
+    @Test
+    void canThrowCategoryNotFoundWhenUpdatingTaskCategory() {
+        // given
+        TaskCategory expected = new TaskCategory(
+                1L,
+                "NAME",
+                "DESCRIPTION",
+                List.of()
+        );
+
+        given(taskCategoryRepository.findById(anyLong())).willReturn(Optional.empty());
+
+        // when
+        assertThrows(CategoryNotFoundException.class, () -> underTest.update(1L, expected));
+    }
+
+    @Test
+    void canThrowCategoryNameAlreadyExistsWhenUpdatingTaskCategory() {
+        // given
+        TaskCategory expected = new TaskCategory(
+                1L,
+                "NAME_UPDATED",
+                "DESCRIPTION",
+                List.of()
+        );
+
+        TaskCategoryEntity taskCategoryEntity = new TaskCategoryEntity();
+        taskCategoryEntity.setId(1L);
+        taskCategoryEntity.setName("NAME");
+        taskCategoryEntity.setDescription("DESCRIPTION");
+
+        given(taskCategoryRepository.findById(anyLong())).willReturn(Optional.of(taskCategoryEntity));
+        given(taskCategoryRepository.existsByName(any())).willReturn(true);
+
+        // when
+        assertThrows(CategoryNameAlreadyExistsException.class, () -> underTest.update(1L, expected));
     }
 
     @Test

@@ -65,7 +65,7 @@ class TaskCategoryControllerTest {
     }
 
     @Test
-    void canAddTaskCategory() throws Exception {
+    void canPostTaskCategory() throws Exception {
         TaskCategory expected = new TaskCategory(
                 1L,
                 "NAME",
@@ -79,6 +79,60 @@ class TaskCategoryControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"NAME\",\"description\":\"DESCRIPTION\"}"))
                 .andExpect(status().isCreated())
+                .andReturn();
+    }
+
+    @Test
+    void canPutTaskCategory() throws Exception {
+        TaskCategory expected = new TaskCategory(
+                1L,
+                "NAME",
+                "DESCRIPTION",
+                List.of()
+        );
+
+        when(service.update(anyLong(), any())).thenReturn(expected);
+
+        mockMvc.perform(put(BASE_URL + "/" + expected.id())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"NAME\",\"description\":\"DESCRIPTION\"}"))
+                .andExpect(status().isOk())
+                .andReturn();
+    }
+
+    @Test
+    void canRespond400WhenPuttingWithPartialDataTaskCategory() throws Exception {
+        TaskCategory expected = new TaskCategory(
+                1L,
+                "NAME",
+                "DESCRIPTION",
+                List.of()
+        );
+
+        when(service.update(anyLong(), any())).thenReturn(expected);
+
+        mockMvc.perform(put(BASE_URL + "/" + expected.id())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"description\":\"DESCRIPTION\"}"))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+    }
+
+    @Test
+    void canPatchTaskCategory() throws Exception {
+        TaskCategory expected = new TaskCategory(
+                1L,
+                "NAME",
+                "DESCRIPTION",
+                List.of()
+        );
+
+        when(service.update(anyLong(), any())).thenReturn(expected);
+
+        mockMvc.perform(patch(BASE_URL + "/" + expected.id())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"description\":\"DESCRIPTION\"}"))
+                .andExpect(status().isOk())
                 .andReturn();
     }
 

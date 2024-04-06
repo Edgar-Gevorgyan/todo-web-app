@@ -43,6 +43,27 @@ public class TaskCategoryController {
         }
     }
 
+    @PutMapping("/{id}")
+    public TaskCategory updateCategory(@PathVariable Long id, @RequestBody TaskCategory taskCategory) {
+        if (taskCategory.name() == null || taskCategory.description() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Both name and description must be provided.");
+        }
+        try {
+            return taskCategoryService.update(id, taskCategory);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
+    @PatchMapping("/{id}")
+    public TaskCategory updatePartiallyCategory(@PathVariable Long id, @RequestBody TaskCategory taskCategory) {
+        try {
+            return taskCategoryService.update(id, taskCategory);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable int id) {
