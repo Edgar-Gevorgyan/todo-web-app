@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 @RestController
 @RequestMapping("tasks")
 @RequiredArgsConstructor
-public class TasksController {
+public class TaskController {
 
     private final TaskService taskService;
 

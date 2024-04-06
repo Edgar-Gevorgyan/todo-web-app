@@ -1,8 +1,8 @@
 package ch.cern.todo.controller;
 
-import ch.cern.todo.dto.Task;
-import ch.cern.todo.exception.TaskNotFoundException;
-import ch.cern.todo.service.TaskService;
+import ch.cern.todo.dto.TaskCategory;
+import ch.cern.todo.exception.CategoryNotFoundException;
+import ch.cern.todo.service.TaskCategoryService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -10,8 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDateTime;
-import java.util.stream.Stream;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -19,19 +18,19 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(TaskController.class)
-class TasksControllerTest {
-    final private String BASE_URL = "/tasks";
+@WebMvcTest(TaskCategoryController.class)
+class TaskCategoryControllerTest {
+    final private String BASE_URL = "/categories";
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private TaskService service;
+    private TaskCategoryService service;
 
 
     @Test
-    void canGetAllTasks() throws Exception {
-        when(service.getAll()).thenReturn(Stream.of());
+    void canGetAllTaskCategories() throws Exception {
+        when(service.getAll()).thenReturn(List.of());
 
         mockMvc.perform(get(BASE_URL))
                 .andExpect(status().isOk())
@@ -39,17 +38,16 @@ class TasksControllerTest {
     }
 
     @Test
-    void canGetTaskById() throws Exception {
+    void canGetTaskCategoryById() throws Exception {
         long expected = 1L;
-        Task task = new Task(
+        TaskCategory taskCategory = new TaskCategory(
                 1L,
                 "NAME",
                 "DESCRIPTION",
-                LocalDateTime.now(),
-                1L
+                List.of()
         );
 
-        when(service.getById(anyLong())).thenReturn(task);
+        when(service.getById(anyLong())).thenReturn(taskCategory);
 
         mockMvc.perform(get(BASE_URL + "/" + expected))
                 .andExpect(status().isOk())
@@ -57,9 +55,9 @@ class TasksControllerTest {
     }
 
     @Test
-    void canGetTaskByIdWhenTaskNotFound() throws Exception {
+    void canGetTaskCategoryByIdWhenTaskNotFound() throws Exception {
         long expected = 1L;
-        when(service.getById(anyLong())).thenThrow(new TaskNotFoundException("Task with id: " + expected + " does not exists."));
+        when(service.getById(anyLong())).thenThrow(new CategoryNotFoundException("Category with id: " + expected + " does not exists."));
 
         mockMvc.perform(get(BASE_URL + "/" + expected))
                 .andExpect(status().isNotFound())
@@ -67,26 +65,25 @@ class TasksControllerTest {
     }
 
     @Test
-    void canAddTask() throws Exception {
-        Task expected = new Task(
+    void canAddTaskCategory() throws Exception {
+        TaskCategory expected = new TaskCategory(
                 1L,
                 "NAME",
                 "DESCRIPTION",
-                LocalDateTime.now(),
-                1L
+                List.of()
         );
 
         when(service.add(any())).thenReturn(expected);
 
         mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"NAME\",\"description\":\"DESCRIPTION\",\"deadline\":\"2024-04-06T00:00:00\",\"categoryId\":\"1\"}"))
+                        .content("{\"name\":\"NAME\",\"description\":\"DESCRIPTION\"}"))
                 .andExpect(status().isCreated())
                 .andReturn();
     }
 
     @Test
-    void canDeleteTask() throws Exception {
+    void canDeleteCategoryTask() throws Exception {
         long expected = 1L;
 
         mockMvc.perform(delete(BASE_URL + "/" + expected))

@@ -17,11 +17,18 @@ public class TaskEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "TASK_ID")
     private Long id;
+
     @Column(name = "TASK_NAME", nullable = false, length = 100)
     private String name;
+
     @Column(name = "TASK_DESCRIPTION", length = 500)
     private String description;
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DEADLINE", nullable = false)
     private LocalDateTime deadline;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CATEGORY_ID", nullable = false)
+    private TaskCategoryEntity category;
 }

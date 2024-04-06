@@ -1,8 +1,11 @@
 package ch.cern.todo.service;
 
 import ch.cern.todo.dto.Task;
+import ch.cern.todo.entity.TaskCategoryEntity;
 import ch.cern.todo.entity.TaskEntity;
+import ch.cern.todo.exception.CategoryNotFoundException;
 import ch.cern.todo.exception.TaskNotFoundException;
+import ch.cern.todo.repository.TaskCategoryRepository;
 import ch.cern.todo.repository.TaskRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,12 +27,14 @@ import static org.mockito.Mockito.verify;
 class TaskServiceTest {
     @Mock
     private TaskRepository taskRepository;
+    @Mock
+    private TaskCategoryRepository taskCategoryRepository;
 
     private TaskService underTest;
 
     @BeforeEach
     void setUp() {
-        underTest = new TaskService(taskRepository);
+        underTest = new TaskService(taskRepository, taskCategoryRepository);
     }
 
     @Test
@@ -47,11 +52,18 @@ class TaskServiceTest {
     void canGetTaskById() {
         // given
         long expected = 1L;
+
+        TaskCategoryEntity taskCategoryEntity = new TaskCategoryEntity();
+        taskCategoryEntity.setId(1L);
+        taskCategoryEntity.setName("NAME");
+        taskCategoryEntity.setDescription("DESCRIPTION");
+
         TaskEntity taskEntity = new TaskEntity(
                 1L,
                 "NAME",
                 "DESCRIPTION",
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                taskCategoryEntity
         );
 
         given(taskRepository.findById(anyLong())).willReturn(Optional.of(taskEntity));
@@ -84,15 +96,25 @@ class TaskServiceTest {
                 1L,
                 "NAME",
                 "DESCRIPTION",
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                1L
         );
+
+
+        TaskCategoryEntity taskCategoryEntity = new TaskCategoryEntity();
+        taskCategoryEntity.setId(1L);
+        taskCategoryEntity.setName("NAME");
+        taskCategoryEntity.setDescription("DESCRIPTION");
+
         TaskEntity taskEntity = new TaskEntity(
                 1L,
                 "NAME",
                 "DESCRIPTION",
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                taskCategoryEntity
         );
 
+        given(taskCategoryRepository.findById(anyLong())).willReturn(Optional.of(taskCategoryEntity));
         given(taskRepository.save(any())).willReturn(taskEntity);
 
         // when
@@ -102,21 +124,44 @@ class TaskServiceTest {
         ArgumentCaptor<TaskEntity> customerArgumentCaptor = ArgumentCaptor.forClass(TaskEntity.class);
         verify(taskRepository).save(customerArgumentCaptor.capture());
 
-        assertEquals(expected.id(), customerArgumentCaptor.getValue().getId());
         assertEquals(expected.name(), customerArgumentCaptor.getValue().getName());
         assertEquals(expected.description(), customerArgumentCaptor.getValue().getDescription());
         assertEquals(expected.deadline(), customerArgumentCaptor.getValue().getDeadline());
     }
 
     @Test
+    void canThrowCategoryNotFoundWhenAddingTask() {
+        // given
+        Task expected = new Task(
+                1L,
+                "NAME",
+                "DESCRIPTION",
+                LocalDateTime.now(),
+                2L
+        );
+
+        given(taskCategoryRepository.findById(anyLong())).willReturn(Optional.empty());
+
+        // when
+        assertThrows(CategoryNotFoundException.class, () -> underTest.add(expected));
+    }
+
+    @Test
     void canDeleteTask() {
         // given
         long expected = 1L;
+
+        TaskCategoryEntity taskCategoryEntity = new TaskCategoryEntity();
+        taskCategoryEntity.setId(1L);
+        taskCategoryEntity.setName("NAME");
+        taskCategoryEntity.setDescription("DESCRIPTION");
+
         TaskEntity taskEntity = new TaskEntity(
                 1L,
                 "NAME",
                 "DESCRIPTION",
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                taskCategoryEntity
         );
 
         given(taskRepository.findById(anyLong())).willReturn(Optional.of(taskEntity));

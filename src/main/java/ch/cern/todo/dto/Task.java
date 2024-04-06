@@ -5,5 +5,6 @@ import java.time.LocalDateTime;
 public record Task(Long id,
                    String name,
                    String description,
-                   LocalDateTime deadline) {
+                   LocalDateTime deadline,
+                   Long categoryId) {
 }
