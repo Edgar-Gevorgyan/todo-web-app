@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TaskCategoryRepository extends JpaRepository<TaskCategoryEntity, Long> {
+    boolean existsByName(String name);
 }

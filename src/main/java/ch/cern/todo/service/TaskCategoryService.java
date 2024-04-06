@@ -2,6 +2,7 @@ package ch.cern.todo.service;
 
 import ch.cern.todo.dto.TaskCategory;
 import ch.cern.todo.entity.TaskCategoryEntity;
+import ch.cern.todo.exception.CategoryNameAlreadyExistsException;
 import ch.cern.todo.exception.CategoryNotFoundException;
 import ch.cern.todo.repository.TaskCategoryRepository;
 import jakarta.transaction.Transactional;
@@ -41,7 +42,11 @@ public class TaskCategoryService {
     }
 
     @Transactional
-    public TaskCategory add(TaskCategory taskCategory) {
+    public TaskCategory add(TaskCategory taskCategory) throws CategoryNameAlreadyExistsException {
+        if (taskCategoryRepository.existsByName(taskCategory.name())) {
+            throw new CategoryNameAlreadyExistsException("Category name : " + taskCategory.name() + " already exists.");
+        }
+
         TaskCategoryEntity taskCategoryEntity = new TaskCategoryEntity();
         taskCategoryEntity.setName(taskCategory.name());
         taskCategoryEntity.setDescription(taskCategory.description());

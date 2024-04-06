@@ -2,6 +2,7 @@ package ch.cern.todo.service;
 
 import ch.cern.todo.dto.TaskCategory;
 import ch.cern.todo.entity.TaskCategoryEntity;
+import ch.cern.todo.exception.CategoryNameAlreadyExistsException;
 import ch.cern.todo.exception.CategoryNotFoundException;
 import ch.cern.todo.repository.TaskCategoryRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -91,7 +92,7 @@ class TaskCategoryServiceTest {
         taskCategoryEntity.setName("NAME");
         taskCategoryEntity.setDescription("DESCRIPTION");
 
-
+        given(taskCategoryRepository.existsByName(any())).willReturn(false);
         given(taskCategoryRepository.save(any())).willReturn(taskCategoryEntity);
 
         // when
@@ -103,6 +104,22 @@ class TaskCategoryServiceTest {
 
         assertEquals(expected.name(), customerArgumentCaptor.getValue().getName());
         assertEquals(expected.description(), customerArgumentCaptor.getValue().getDescription());
+    }
+
+    @Test
+    void canThrowCategoryNotFoundWhenAddingTaskCategory() {
+        // given
+        TaskCategory expected = new TaskCategory(
+                1L,
+                "NAME",
+                "DESCRIPTION",
+                List.of()
+        );
+
+        given(taskCategoryRepository.existsByName(any())).willReturn(true);
+
+        // when
+        assertThrows(CategoryNameAlreadyExistsException.class, () -> underTest.add(expected));
     }
 
     @Test
