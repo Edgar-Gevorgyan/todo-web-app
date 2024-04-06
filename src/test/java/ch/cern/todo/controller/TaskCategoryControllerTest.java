@@ -109,8 +109,6 @@ class TaskCategoryControllerTest {
                 List.of()
         );
 
-        when(service.update(anyLong(), any())).thenReturn(expected);
-
         mockMvc.perform(put(BASE_URL + "/" + expected.id())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"description\":\"DESCRIPTION\"}"))

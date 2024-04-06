@@ -43,6 +43,27 @@ public class TaskController {
         }
     }
 
+    @PutMapping("/{id}")
+    public Task updateTask(@PathVariable Long id, @RequestBody Task task) {
+        if (task.name() == null || task.description() == null || task.deadline() == null || task.categoryId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "All attributes (name, description, deadline, categoryId) are required.");
+        }
+        try {
+            return taskService.update(id, task);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
+    @PatchMapping("/{id}")
+    public Task updatePartiallyTask(@PathVariable Long id, @RequestBody Task task) {
+        try {
+            return taskService.update(id, task);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void deleteTask(@PathVariable int id) {

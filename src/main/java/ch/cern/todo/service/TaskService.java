@@ -37,35 +37,63 @@ public class TaskService {
     }
 
     public Task getById(long id) throws TaskNotFoundException {
-        Optional<TaskEntity> taskEntity = taskRepository.findById(id);
-        if (taskEntity.isEmpty()) {
-            throw new TaskNotFoundException("Task with id: " + id + " does not exists.");
-        }
-        return convertToTask(taskEntity.get());
+        TaskEntity taskEntity = getTaskEntityById(id);
+        return convertToTask(taskEntity);
     }
 
     @Transactional
     public Task add(Task task) throws CategoryNotFoundException {
-        Optional<TaskCategoryEntity> taskCategoryEntity = taskCategoryRepository.findById(task.categoryId());
-        if (taskCategoryEntity.isEmpty()) {
-            throw new CategoryNotFoundException("Category with id: " + task.categoryId() + " does not exists.");
-        }
+        TaskCategoryEntity taskCategoryEntity = getTaskCategoryEntityById(task.categoryId());
 
         TaskEntity taskEntity = new TaskEntity();
         taskEntity.setName(task.name());
         taskEntity.setDescription(task.description());
         taskEntity.setDeadline(task.deadline());
-        taskEntity.setCategory(taskCategoryEntity.get());
+        taskEntity.setCategory(taskCategoryEntity);
 
         TaskEntity createdTaskEntity = taskRepository.save(taskEntity);
         return convertToTask(createdTaskEntity);
     }
 
+    @Transactional
+    public Task update(long id, Task task) throws TaskNotFoundException, CategoryNotFoundException {
+        TaskEntity taskEntity = getTaskEntityById(id);
+        if (task.name() != null) {
+            taskEntity.setName(task.name());
+        }
+        if (task.description() != null) {
+            taskEntity.setDescription(task.description());
+        }
+        if (task.deadline() != null) {
+            taskEntity.setDeadline(task.deadline());
+        }
+        if (task.categoryId() != null && !task.categoryId().equals(taskEntity.getCategory().getId())) {
+            TaskCategoryEntity taskCategoryEntity = getTaskCategoryEntityById(task.categoryId());
+            taskEntity.setCategory(taskCategoryEntity);
+        }
+
+        TaskEntity updatedTaskEntity = taskRepository.save(taskEntity);
+        return convertToTask(updatedTaskEntity);
+    }
+
     public void delete(long id) throws TaskNotFoundException {
+        TaskEntity taskEntity = getTaskEntityById(id);
+        taskRepository.delete(taskEntity);
+    }
+
+    private TaskEntity getTaskEntityById(long id) throws TaskNotFoundException {
         Optional<TaskEntity> taskEntity = taskRepository.findById(id);
         if (taskEntity.isEmpty()) {
             throw new TaskNotFoundException("Task with id: " + id + " does not exists.");
         }
-        taskRepository.delete(taskEntity.get());
+        return taskEntity.get();
+    }
+
+    private TaskCategoryEntity getTaskCategoryEntityById(long id) throws CategoryNotFoundException {
+        Optional<TaskCategoryEntity> taskCategoryEntity = taskCategoryRepository.findById(id);
+        if (taskCategoryEntity.isEmpty()) {
+            throw new CategoryNotFoundException("Category with id: " + id + " does not exists.");
+        }
+        return taskCategoryEntity.get();
     }
 }

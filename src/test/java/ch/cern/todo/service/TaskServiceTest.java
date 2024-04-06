@@ -100,7 +100,6 @@ class TaskServiceTest {
                 1L
         );
 
-
         TaskCategoryEntity taskCategoryEntity = new TaskCategoryEntity();
         taskCategoryEntity.setId(1L);
         taskCategoryEntity.setName("NAME");
@@ -127,7 +126,72 @@ class TaskServiceTest {
         assertEquals(expected.name(), customerArgumentCaptor.getValue().getName());
         assertEquals(expected.description(), customerArgumentCaptor.getValue().getDescription());
         assertEquals(expected.deadline(), customerArgumentCaptor.getValue().getDeadline());
+        assertEquals(expected.categoryId(), customerArgumentCaptor.getValue().getCategory().getId());
     }
+
+    @Test
+    void canUpdateTask() {
+        // given
+        Task expected = new Task(
+                1L,
+                "NAME",
+                "DESCRIPTION",
+                LocalDateTime.now(),
+                2L
+        );
+
+        TaskCategoryEntity updatedTaskCategoryEntity = new TaskCategoryEntity();
+        updatedTaskCategoryEntity.setId(2L);
+        updatedTaskCategoryEntity.setName("NAME");
+        updatedTaskCategoryEntity.setDescription("DESCRIPTION");
+
+        TaskCategoryEntity taskCategoryEntity = new TaskCategoryEntity();
+        taskCategoryEntity.setId(1L);
+        taskCategoryEntity.setName("NAME");
+        taskCategoryEntity.setDescription("DESCRIPTION");
+
+        TaskEntity taskEntity = new TaskEntity(
+                1L,
+                "NAME",
+                "DESCRIPTION",
+                LocalDateTime.now(),
+                taskCategoryEntity
+        );
+
+        given(taskRepository.findById(anyLong())).willReturn(Optional.of(taskEntity));
+        given(taskCategoryRepository.findById(anyLong())).willReturn(Optional.of(updatedTaskCategoryEntity));
+        given(taskRepository.save(any())).willReturn(taskEntity);
+
+        // when
+        assertDoesNotThrow(() -> underTest.update(1L, expected));
+
+        // then
+        ArgumentCaptor<TaskEntity> customerArgumentCaptor = ArgumentCaptor.forClass(TaskEntity.class);
+        verify(taskRepository).save(customerArgumentCaptor.capture());
+
+        assertEquals(expected.name(), customerArgumentCaptor.getValue().getName());
+        assertEquals(expected.description(), customerArgumentCaptor.getValue().getDescription());
+        assertEquals(expected.deadline(), customerArgumentCaptor.getValue().getDeadline());
+        assertEquals(expected.categoryId(), customerArgumentCaptor.getValue().getCategory().getId());
+    }
+
+    @Test
+    void canThrowTaskNotFoundWhenUpdatingTaskById() {
+        // given
+        Task expected = new Task(
+                1L,
+                "NAME",
+                "DESCRIPTION",
+                LocalDateTime.now(),
+                2L
+        );
+
+        given(taskRepository.findById(anyLong())).willReturn(Optional.empty());
+
+        // when
+        assertThrows(TaskNotFoundException.class, () -> underTest.update(1L, expected));
+    }
+
 
     @Test
     void canThrowCategoryNotFoundWhenAddingTask() {
