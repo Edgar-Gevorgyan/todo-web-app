@@ -33,6 +33,7 @@ and delete tasks and categories.
 
 ## Technologies Used
 
+- **Angular**: Framework for building the frontend.
 - **Spring Boot**: Framework for building the RESTful API.
 - **Spring Data JPA**: For persistence with the database.
 - **Spring Web**: For building RESTful web services.
@@ -55,17 +56,32 @@ and delete tasks and categories.
     - H2 database is configured to run in-memory by default for development purposes.
     - No further setup is required. Database schema will be created automatically.
 
-4. **Build the Application**:
+4. **Build the Backend**:
     ```
     ./gradlew build
     ```
 
-5. **Run the Application**:
+5. **Run the Backend**:
     ```
     java -jar build/libs/todo-api.jar
     ```
 
-6. **Access API Endpoints**:
+6. **Navigate to Frontend Directory**:
+    ```
+    cd frontend
+    ```
+
+7. **Install dependencies**:
+    ```
+    npm i
+    ```
+
+8. **Run the Frontend**:
+    ```
+    ng serve
+    ```
+
+9. **Access API Endpoints**:
     - Once the application is running, you can access the API endpoints for tasks at `http://localhost:8080/api/tasks`
       and for categories at `http://localhost:8080/api/categories`.
 

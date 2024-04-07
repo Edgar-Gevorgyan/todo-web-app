@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.stream.Stream;
 
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/tasks")
 @RequiredArgsConstructor

@@ -33,6 +33,7 @@ public class TaskCategoryService {
         return taskCategoryRepository.findAll().stream().map(TaskCategoryService::convertToTaskCategory).collect(Collectors.toList());
     }
 
+    @Transactional
     public TaskCategory getById(long id) throws CategoryNotFoundException {
         TaskCategoryEntity taskCategoryEntity = getTaskCategoryEntityById(id);
         return convertToTaskCategory(taskCategoryEntity);
