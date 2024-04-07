@@ -175,4 +175,27 @@ Here are some curl examples to demonstrate how to interact with the API:
     curl -X DELETE http://localhost:8080/api/tasks/{task_id}
     ```
 
-Similar curl commands can be used for categories.
+- **Create a Test Category**:
+    ```bash
+    curl -X POST -H "Content-Type: application/json" -d '{"name":"TestCategory", "description":"Description of Test Category"}' http://localhost:8080/api/categories
+    ```
+
+- **Retrieve All Test Categories**:
+    ```bash
+    curl http://localhost:8080/api/categories
+    ```
+
+- **Retrieve a Test Category by ID**:
+    ```bash
+    curl http://localhost:8080/api/categories/{category_id}
+    ```
+
+- **Update a Test Category**:
+    ```bash
+    curl -X PUT -H "Content-Type: application/json" -d '{"name":"UpdatedTestCategory", "description":"Updated Description of Test Category"}' http://localhost:8080/api/categories/{category_id}
+    ```
+
+- **Delete a Test Category**:
+    ```bash
+    curl -X DELETE http://localhost:8080/api/categories/{category_id}
+    ```
