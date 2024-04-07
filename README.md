@@ -103,6 +103,16 @@ Represents a todo task with the following attributes:
 - **deadline**: The deadline or due date for the task.
 - **categoryId**: The ID of the category to which the task belongs.
 
+```json
+{
+  "id": 1,
+  "name": "Task 1",
+  "description": "Description of Task 1",
+  "deadline": "2024-04-10T12:00:00",
+  "categoryId": 1
+}
+```
+
 #### Task Category
 
 Represents a category for organizing todo tasks with the following attributes:
@@ -111,6 +121,30 @@ Represents a category for organizing todo tasks with the following attributes:
 - **name**: The name or title of the category.
 - **description**: The detailed description of the category.
 - **tasks**: A list of tasks associated with the category.
+
+```json
+{
+  "id": 1,
+  "name": "Category 1",
+  "description": "Description of Category 1",
+  "tasks": [
+    {
+      "id": 1,
+      "name": "Task 1",
+      "description": "Description of Task 1",
+      "deadline": "2024-04-10T12:00:00",
+      "categoryId": 1
+    },
+    {
+      "id": 2,
+      "name": "Task 2",
+      "description": "Description of Task 2",
+      "deadline": "2024-04-12T12:00:00",
+      "categoryId": 1
+    }
+  ]
+}
+```
 
 ### Curl Examples
 
