@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(TaskController.class)
 class TasksControllerTest {
-    final private String BASE_URL = "/tasks";
+    final private String BASE_URL = "/api/tasks";
     @Autowired
     private MockMvc mockMvc;
 

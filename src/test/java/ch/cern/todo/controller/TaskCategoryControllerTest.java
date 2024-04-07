@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(TaskCategoryController.class)
 class TaskCategoryControllerTest {
-    final private String BASE_URL = "/categories";
+    final private String BASE_URL = "/api/categories";
     @Autowired
     private MockMvc mockMvc;
 

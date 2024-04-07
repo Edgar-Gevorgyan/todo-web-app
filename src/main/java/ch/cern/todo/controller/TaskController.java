@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 
 @RestController
-@RequestMapping("tasks")
+@RequestMapping("/api/tasks")
 @RequiredArgsConstructor
 public class TaskController {
 
